@@ -8,21 +8,67 @@
         type="text"
         v-model="newTodoDesc"
         placeholder="Describe the task..."
+        v-on:keyup.enter="addTodo()"
       />
       <span v-on:click="addTodo()" class="btn">Add</span>
       <span v-on:click="selectAll()" class="btn">Tick All</span>
-      <span v-on:click="removeDoneTasks()" class="btn">Clear tasks</span>
+      <span v-on:click="removeDoneTasks()" class="btn">Clear done</span>
+      <span
+        v-on:click="displayAll()"
+        v-bind:class="{ 'w3-blue': displayMode == 0 }"
+        class="btn"
+        >Display all</span
+      >
+      <span
+        v-on:click="displayTodo()"
+        v-bind:class="{ 'w3-blue': displayMode == 1 }"
+        class="btn"
+        >Display todo</span
+      >
+      <span
+        v-on:click="displayDone()"
+        v-bind:class="{ 'w3-blue': displayMode == 2 }"
+        class="btn"
+        >Display done</span
+      >
     </div>
 
     <ul id="myUL">
       <li
-        v-for="todo in todos"
+        v-for="todo in getFilteredList().slice().reverse()"
         :key="todo.id"
-        v-on:click="toggleDone(todo.id)"
         v-bind:class="{ checked: todo.done }"
       >
-        {{ todo.description }}
-        <span class="close" v-on:click="removeTodo(todo.id)">&times;</span>
+        <div class="w3-container">
+          <span style="min-width: 400px" v-if="!todo.editing">
+            {{ todo.description }}
+          </span>
+          <input
+            class="w3-input"
+            style="width: 400px"
+            v-if="todo.editing"
+            v-model="todo.description"
+            type="text"
+          />
+          <button
+            class="w3-right w3-button w3-red w3-round w3-margin-left"
+            v-on:click="removeTodo(todo.id)"
+          >
+            &times;
+          </button>
+          <button
+            class="w3-right w3-button w3-green w3-round w3-margin-left"
+            v-on:click="toggleDone(todo.id)"
+          >
+            Check
+          </button>
+          <button
+            class="w3-right w3-button w3-yellow w3-round w3-margin-left"
+            v-on:click="edit(todo)"
+          >
+            Edit
+          </button>
+        </div>
         <!-- <span class="edit" v-on:click="edit(todo.id)">Edit</span> -->
       </li>
     </ul>
@@ -41,6 +87,7 @@ let currentId = 0;
 class Todo {
   public description: string;
   public done = false;
+  public editing = false;
   public id = currentId++;
 
   constructor(description: string) {
@@ -48,13 +95,59 @@ class Todo {
   }
 }
 
+enum DisplayMode {
+  All,
+  Todo,
+  Done,
+}
+
 @Component
 export default class Todos extends Vue {
   @Prop() private msg!: string;
 
-  private todos: Todo[] = [new Todo("eat")];
+  private todos: Todo[] = [];
+  private filteredTodos: Todo[] = [];
+
+  private displayMode: DisplayMode = DisplayMode.All;
 
   private newTodoDesc = "";
+
+  getFilteredList() {
+    switch (this.displayMode) {
+      case DisplayMode.All:
+        return this.todos;
+      case DisplayMode.Done:
+        return this.todos.filter((e) => {
+          return e.done;
+        });
+      case DisplayMode.Todo:
+        return this.todos.filter((e) => {
+          return !e.done;
+        });
+      default:
+        return [];
+    }
+  }
+
+  displayAll() {
+    this.displayMode = DisplayMode.All;
+  }
+
+  displayDone() {
+    this.displayMode = DisplayMode.Done;
+  }
+
+  displayTodo() {
+    this.displayMode = DisplayMode.Todo;
+  }
+
+  edit(todo: Todo) {
+    if (todo.editing) {
+      todo.editing = false;
+    } else {
+      todo.editing = true;
+    }
+  }
 
   toggleDone(id: number) {
     this.todos.forEach((element) => {
@@ -72,6 +165,7 @@ export default class Todos extends Vue {
     this.todos = this.todos.filter(function (value: Todo) {
       return !value.done;
     });
+    this.filteredTodos = this.todos;
   }
 
   nbTaskLeft() {
@@ -86,6 +180,7 @@ export default class Todos extends Vue {
     const value = this.newTodoDesc.toString();
     this.todos.push(new Todo(value));
     this.newTodoDesc = "";
+    this.filteredTodos = this.todos;
   }
 
   selectAll() {
@@ -123,7 +218,6 @@ ul {
 
 /* Style the list items */
 ul li {
-  cursor: pointer;
   position: relative;
   padding: 12px 8px 12px 40px;
   list-style-type: none;
@@ -215,7 +309,7 @@ input {
   margin: 0;
   border: none;
   border-radius: 0;
-  width: 60%;
+  width: 30%;
   padding: 10px;
   float: left;
   font-size: 16px;
