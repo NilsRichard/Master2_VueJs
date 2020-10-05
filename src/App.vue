@@ -1,10 +1,10 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+  <div>
+    <div class="w3-bar w3-light-grey">
+      <router-link class="w3-bar-item w3-button" to="/">Home</router-link>
+      <router-link class="w3-bar-item w3-button" to="/about">About</router-link>
     </div>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
