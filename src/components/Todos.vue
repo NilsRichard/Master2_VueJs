@@ -82,6 +82,9 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 
+/**
+ * Autoincremented values for the tasks ids
+ */
 let currentId = 0;
 
 class Todo {
@@ -95,6 +98,9 @@ class Todo {
   }
 }
 
+/**
+ * Possible modes to display the tasks
+ */
 enum DisplayMode {
   All,
   Todo,
@@ -112,6 +118,9 @@ export default class Todos extends Vue {
 
   private newTodoDesc = "";
 
+  /**
+   * Filters the list depending on the mode
+   */
   getFilteredList() {
     switch (this.displayMode) {
       case DisplayMode.All:
@@ -141,6 +150,9 @@ export default class Todos extends Vue {
     this.displayMode = DisplayMode.Todo;
   }
 
+  /**
+   * Displays the input to edit the task
+   */
   edit(todo: Todo) {
     if (todo.editing) {
       todo.editing = false;
@@ -149,18 +161,27 @@ export default class Todos extends Vue {
     }
   }
 
+  /**
+   * Toggle a tasks to the opposite boolean value
+   */
   toggleDone(id: number) {
     this.todos.forEach((element) => {
       if (element.id === id) element.done = !element.done;
     });
   }
 
+  /**
+   * Removes a todo from the list
+   */
   removeTodo(id: number) {
     this.todos = this.todos.filter(function (value: Todo) {
       return value.id !== id;
     });
   }
 
+  /**
+   * Remoes all the done tasks
+   */
   removeDoneTasks() {
     this.todos = this.todos.filter(function (value: Todo) {
       return !value.done;
@@ -168,6 +189,9 @@ export default class Todos extends Vue {
     this.filteredTodos = this.todos;
   }
 
+  /**
+   * Returns the number of undone tasks
+   */
   nbTaskLeft() {
     let nb = 0;
     this.todos.forEach((e: Todo) => {
@@ -176,6 +200,9 @@ export default class Todos extends Vue {
     return nb;
   }
 
+  /**
+   * Adds a new Task with thedescription given in the newTodoDesc input
+   */
   addTodo() {
     const value = this.newTodoDesc.toString();
     this.todos.push(new Todo(value));
@@ -183,6 +210,9 @@ export default class Todos extends Vue {
     this.filteredTodos = this.todos;
   }
 
+/**
+ * Sets all tasks to done
+ */
   selectAll() {
     this.todos.forEach((element: Todo) => {
       element.done = true;
