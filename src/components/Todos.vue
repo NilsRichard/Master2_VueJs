@@ -82,15 +82,12 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 
-/**
- * Autoincremented values for the tasks ids
- */
-let currentId = 0;
+let currentId = 0; // Autoincremented values for the tasks ids
 
 class Todo {
-  public description: string;
-  public done = false;
-  public editing = false;
+  public description: string; // name, secription of the task
+  public done = false; // task checked or not
+  public editing = false; // user currently editing the task
   public id = currentId++;
 
   constructor(description: string) {
