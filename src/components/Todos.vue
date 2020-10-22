@@ -2,7 +2,7 @@
   <div style="height: 100%">
     <div id="myDIV" class="header">
       <h2 style="margin: 5px">
-        Todo List <span class="w3-small">(click on an item to tick it)</span>
+        Todo List
       </h2>
       <input
         type="text"

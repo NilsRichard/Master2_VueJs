@@ -1,5 +1,9 @@
 <template>
-  <div class="about">
-    <h1>This is an about page</h1>
+  <div class="about w3-margin">
+    <h1>Auteurs:</h1>
+        <ul>
+          <li>Dorian Bouillet</li>
+          <li>Nils Richard</li>
+        </ul>
   </div>
 </template>
